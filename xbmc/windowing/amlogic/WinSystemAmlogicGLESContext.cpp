@@ -19,6 +19,11 @@
 #include "windowing/GraphicContext.h"
 #include "windowing/WindowSystemFactory.h"
 
+extern "C"
+{
+#include <libavutil/pixfmt.h>
+}
+
 using namespace KODI;
 using namespace KODI::WINDOWING::AML;
 
@@ -327,6 +332,161 @@ void CWinSystemAmlogicGLESContext::PresentRender(bool rendered, bool videoLayer)
     for (std::vector<IDispResource *>::iterator i = m_resources.begin(); i != m_resources.end(); ++i)
       (*i)->OnResetDisplay();
   }
+}
+
+bool CWinSystemAmlogicGLESContext::SetGuiCompositing(int colorTransfer)
+{
+  m_guiCompositing = (colorTransfer != 0);
+
+  if (m_guiCompositing)
+  {
+    if (!m_guiFbo.IsSupported())
+    {
+      CLog::Log(LOGINFO, "CWinSystemAmlogicGLESContext: do not support GL_EXT_framebuffer_object");
+      m_guiCompositing = false;
+      return false;
+    }
+
+    if (!m_compositeShader)
+    {
+      std::string defines;
+      if (UseLimitedColor())
+        defines += "#define KODI_LIMITED_RANGE 1\n";
+      m_compositeShader = std::make_unique<CGuiCompositeShaderGLES>(defines);
+      if (!m_compositeShader->CompileAndLink())
+      {
+        CLog::Log(LOGERROR, "CWinSystemAmlogicGLESContext: failed to compile GUI composite shader");
+        m_compositeShader.reset();
+        m_guiCompositing = false;
+        return false;
+      }
+    }
+
+    if (!m_compositeShader->CreateLUTs(colorTransfer))
+    {
+      CLog::Log(LOGERROR, "CWinSystemAmlogicGLESContext: failed to create LUTs");
+      m_compositeShader.reset();
+      m_guiCompositing = false;
+      return false;
+    }
+  }
+  else
+  {
+    m_guiFbo.Cleanup();
+    m_guiFboWidth = 0;
+    m_guiFboHeight = 0;
+    m_compositeShader.reset();
+  }
+
+  return m_guiCompositing;
+}
+
+bool CWinSystemAmlogicGLESContext::BeginGuiComposite()
+{
+  if (!m_guiCompositing)
+    return false;
+
+  int width = m_nWidth;
+  int height = m_nHeight;
+
+  // create or recreate FBO if size changed
+  if (!m_guiFbo.IsValid() || m_guiFboWidth != width || m_guiFboHeight != height)
+  {
+    m_guiFbo.Cleanup();
+
+    if (!m_guiFbo.Initialize())
+    {
+      CLog::Log(LOGERROR, "CWinSystemAmlogicGLESContext: failed to initialize GUI FBO");
+      return false;
+    }
+
+    if (!m_guiFbo.CreateAndBindToTexture(GL_TEXTURE_2D, width, height, GL_RGBA))
+    {
+      CLog::Log(LOGERROR, "CWinSystemAmlogicGLESContext: failed to create GUI FBO texture {}x{}", width,
+                height);
+      m_guiFbo.Cleanup();
+      return false;
+    }
+
+    if (GetEnabledFrontToBackRendering() && !m_guiFbo.AttachDepthBuffer(width, height))
+    {
+      CLog::Log(LOGERROR,
+                "CWinSystemAmlogicGLESContext: failed to attach depth buffer to GUI FBO {}x{}", width,
+                height);
+      m_guiFbo.Cleanup();
+      return false;
+    }
+
+    m_guiFboWidth = width;
+    m_guiFboHeight = height;
+
+    // clear FBO to transparent black
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    CLog::Log(LOGDEBUG, "CWinSystemAmlogicGLESContext: created GUI FBO {}x{}", width, height);
+  }
+
+  if (!m_guiFbo.BeginRender())
+    return false;
+
+  return true;
+}
+
+void CWinSystemAmlogicGLESContext::EndGuiComposite()
+{
+  m_guiFbo.EndRender();
+
+  // Clear the backbuffer before video renders. In the FBO compositing path,
+  // video renders in the RenderEx pass with clear=false, so DrawBlackBars is
+  // never called. Without this clear, letterbox areas retain stale content
+  // from the swap chain when the display resolution doesn't change between
+  // GUI and video playback.
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+}
+
+// CompositeGui is the last GL operation in the frame (called just before EndRender).
+// GL state (blend mode, active texture, vertex arrays) is not restored afterward;
+// the next frame's rendering sets its own state.
+void CWinSystemAmlogicGLESContext::CompositeGui()
+{
+  if (!m_guiFbo.IsValid() || !m_guiFbo.IsBound() || !m_compositeShader)
+    return;
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, m_guiFbo.Texture());
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  // set up orthographic projection (screen coords, Y-down)
+  float w = static_cast<float>(m_guiFboWidth);
+  float h = static_cast<float>(m_guiFboHeight);
+
+  GLfloat proj[16] = {2.0f / w, 0, 0, 0, 0, -2.0f / h, 0, 0, 0, 0, -1, 0, -1.0f, 1.0f, 0, 1};
+
+  m_compositeShader->SetProjection(proj);
+  m_compositeShader->Enable();
+
+  GLint posLoc = m_compositeShader->GetPosLoc();
+  GLint texLoc = m_compositeShader->GetTexLoc();
+
+  GLfloat vert[4][2] = {{0, 0}, {w, 0}, {w, h}, {0, h}};
+  GLfloat tex[4][2] = {{0, 1}, {1, 1}, {1, 0}, {0, 0}};
+  GLubyte idx[4] = {0, 1, 3, 2};
+
+  glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, vert);
+  glVertexAttribPointer(texLoc, 2, GL_FLOAT, GL_FALSE, 0, tex);
+  glEnableVertexAttribArray(posLoc);
+  glEnableVertexAttribArray(texLoc);
+
+  glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, idx);
+
+  glDisableVertexAttribArray(posLoc);
+  glDisableVertexAttribArray(texLoc);
+
+  m_compositeShader->Disable();
 }
 
 EGLDisplay CWinSystemAmlogicGLESContext::GetEGLDisplay() const

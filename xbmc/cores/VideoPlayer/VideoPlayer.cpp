@@ -5921,7 +5921,8 @@ void CVideoPlayer::GetVideoStreamInfo(int streamId, VideoStreamInfo& info) const
   info.stereoMode = s.stereo_mode;
   info.flags = s.flags;
   info.hdrType = s.hdrType;
-  if (info.hdrType == StreamHdrType::HDR_TYPE_DOLBYVISION)
+  if ((info.hdrType = aml_dolby_vision_enabled() ? info.hdrType : StreamHdrType::HDR_TYPE_HDR10) ==
+      StreamHdrType::HDR_TYPE_DOLBYVISION)
   {
     if (info.hdrDetail.length() == 0)
       info.hdrDetail =

@@ -15,7 +15,7 @@ set(SOURCES GUIInfo.cpp
             SkinGUIInfo.cpp
             SystemGUIInfo.cpp
             VideoGUIInfo.cpp
-            VisualisationGUIInfo.cpp
+            VisualisationGUIInfo.cpp)
 
 set(HEADERS GUIInfo.h
             GUIInfoHelper.h
@@ -37,6 +37,6 @@ set(HEADERS GUIInfo.h
             SkinGUIInfo.h
             SystemGUIInfo.h
             VideoGUIInfo.h
-            VisualisationGUIInfo.h
+            VisualisationGUIInfo.h)
 
 core_add_library(guilib_guiinfo)

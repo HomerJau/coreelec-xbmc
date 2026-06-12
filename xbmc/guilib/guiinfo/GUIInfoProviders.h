@@ -19,7 +19,6 @@
 #include "guilib/guiinfo/SystemGUIInfo.h"
 #include "guilib/guiinfo/VideoGUIInfo.h"
 #include "guilib/guiinfo/VisualisationGUIInfo.h"
-#include "guilib/guiinfo/WeatherGUIInfo.h"
 
 #include <string>
 #include <vector>
@@ -154,7 +153,6 @@ private:
   CSystemGUIInfo m_systemGUIInfo;
   CVideoGUIInfo m_videoGUIInfo;
   CVisualisationGUIInfo m_visualisationGUIInfo;
-  CWeatherGUIInfo m_weatherGUIInfo;
 };
 
 } // namespace KODI::GUILIB::GUIINFO

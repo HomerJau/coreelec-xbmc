@@ -26,7 +26,6 @@ CGUIInfoProviders::CGUIInfoProviders()
   RegisterProvider(&m_playerGUIInfo);
   RegisterProvider(&m_libraryGUIInfo);
   RegisterProvider(&m_addonsGUIInfo);
-  RegisterProvider(&m_weatherGUIInfo);
   RegisterProvider(&m_gamesGUIInfo);
   RegisterProvider(&m_systemGUIInfo);
   RegisterProvider(&m_visualisationGUIInfo);
@@ -39,7 +38,6 @@ CGUIInfoProviders::~CGUIInfoProviders()
   UnregisterProvider(&m_visualisationGUIInfo);
   UnregisterProvider(&m_systemGUIInfo);
   UnregisterProvider(&m_gamesGUIInfo);
-  UnregisterProvider(&m_weatherGUIInfo);
   UnregisterProvider(&m_addonsGUIInfo);
   UnregisterProvider(&m_libraryGUIInfo);
   UnregisterProvider(&m_playerGUIInfo);

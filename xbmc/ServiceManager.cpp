@@ -48,7 +48,6 @@
 #include "utils/FileExtensionProvider.h"
 #include "utils/i18n/Bcp47Registry/SubTagRegistryManager.h"
 #include "utils/log.h"
-#include "weather/WeatherManager.h"
 
 #include <memory>
 
@@ -183,7 +182,6 @@ bool CServiceManager::InitStageTwo(const std::string& profilesUserDataFolder)
   m_powerManager->Initialize();
   m_powerManager->SetDefaults();
 
-  m_weatherManager = std::make_unique<CWeatherManager>(*m_addonMgr);
 
   m_mediaManager = std::make_unique<CMediaManager>();
   m_mediaManager->Initialize();
@@ -271,7 +269,6 @@ void CServiceManager::DeinitStageTwo()
   m_WSDiscovery.reset();
 #endif
 
-  m_weatherManager.reset();
   m_powerManager.reset();
   m_fileExtensionProvider.reset();
   m_gameRenderManager.reset();
@@ -440,11 +437,6 @@ CPowerManager& CServiceManager::GetPowerManager()
 CNetworkBase& CServiceManager::GetNetwork()
 {
   return *m_network;
-}
-
-CWeatherManager& CServiceManager::GetWeatherManager()
-{
-  return *m_weatherManager;
 }
 
 CPlayerCoreFactory& CServiceManager::GetPlayerCoreFactory()

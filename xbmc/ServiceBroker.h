@@ -65,7 +65,6 @@ class CNetworkBase;
 class CWinSystemBase;
 class CRenderSystemBase;
 class CPowerManager;
-class CWeatherManager;
 class CPlayerCoreFactory;
 class CDatabaseManager;
 class CEventLog;
@@ -179,7 +178,6 @@ public:
   static bool IsServiceManagerUp();
   static CNetworkBase& GetNetwork();
   static CPowerManager& GetPowerManager();
-  static CWeatherManager& GetWeatherManager();
   static CPlayerCoreFactory& GetPlayerCoreFactory();
   static CDatabaseManager& GetDatabaseManager();
   static CEventLog* GetEventLog();

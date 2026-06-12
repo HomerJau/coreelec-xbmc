@@ -47,7 +47,6 @@ class CFavouritesService;
 class CNetworkBase;
 class CWinSystemBase;
 class CPowerManager;
-class CWeatherManager;
 class CSlideShowDelegator;
 
 namespace KODI
@@ -208,7 +207,6 @@ public:
 
   CPowerManager& GetPowerManager();
 
-  CWeatherManager& GetWeatherManager();
 
   CPlayerCoreFactory& GetPlayerCoreFactory();
 
@@ -250,7 +248,6 @@ protected:
   std::unique_ptr<CFileExtensionProvider> m_fileExtensionProvider;
   std::unique_ptr<CNetworkBase> m_network;
   std::unique_ptr<CPowerManager> m_powerManager;
-  std::unique_ptr<CWeatherManager> m_weatherManager;
   std::unique_ptr<CPlayerCoreFactory> m_playerCoreFactory;
   std::unique_ptr<CDatabaseManager> m_databaseManager;
   std::unique_ptr<CMediaManager> m_mediaManager;

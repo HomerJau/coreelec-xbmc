@@ -258,11 +258,6 @@ CPowerManager& CServiceBroker::GetPowerManager()
   return g_application.m_ServiceManager->GetPowerManager();
 }
 
-CWeatherManager& CServiceBroker::GetWeatherManager()
-{
-  return g_application.m_ServiceManager->GetWeatherManager();
-}
-
 CPlayerCoreFactory& CServiceBroker::GetPlayerCoreFactory()
 {
   return g_application.m_ServiceManager->GetPlayerCoreFactory();

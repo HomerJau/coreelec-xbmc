@@ -57,7 +57,6 @@
 #include "utils/XMLUtils.h"
 #include "utils/log.h"
 #include "video/VideoLibraryQueue.h" //! @todo Remove me
-#include "weather/WeatherManager.h" //! @todo Remove me
 
 #include <algorithm>
 #include <memory>
@@ -386,7 +385,6 @@ void CProfileManager::FinalizeLoadProfile()
   const PVR::CPVRManager& pvrManager = CServiceBroker::GetPVRManager();
   CNetworkBase &networkManager = CServiceBroker::GetNetwork();
   ADDON::CAddonMgr &addonManager = CServiceBroker::GetAddonMgr();
-  CWeatherManager &weatherManager = CServiceBroker::GetWeatherManager();
   CFavouritesService &favouritesManager = CServiceBroker::GetFavouritesService();
   PLAYLIST::CPlayListPlayer &playlistManager = CServiceBroker::GetPlaylistPlayer();
   CStereoscopicsManager &stereoscopicsManager = CServiceBroker::GetGUI()->GetStereoscopicsManager();
@@ -412,8 +410,6 @@ void CProfileManager::FinalizeLoadProfile()
               GetCurrentProfile().getName());
     return;
   }
-
-  weatherManager.Refresh();
 
   JSONRPC::CJSONRPC::Initialize();
 

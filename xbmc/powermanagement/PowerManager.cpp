@@ -35,7 +35,6 @@
 #include "settings/lib/SettingDefinitions.h"
 #include "settings/lib/SettingsManager.h"
 #include "utils/log.h"
-#include "weather/WeatherManager.h"
 
 #if defined(TARGET_DARWIN_OSX) || defined(TARGET_WINDOWS)
 #include "windowing/WinSystem.h"
@@ -246,7 +245,6 @@ void CPowerManager::OnWake()
 
   CServiceBroker::GetActiveAE()->Resume();
   g_application.UpdateLibraries();
-  CServiceBroker::GetWeatherManager().Refresh();
   CServiceBroker::GetTextureCache()->OnWake();
   CServiceBroker::GetRepositoryUpdater().OnWake();
   CServiceBroker::GetPVRManager().OnWake();

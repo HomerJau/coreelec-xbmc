@@ -15,7 +15,6 @@
 #include "Util.h"
 #include "dialogs/GUIDialogGamepad.h"
 #include "dialogs/GUIDialogNumeric.h"
-#include "favourites/FavouritesService.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIKeyboardFactory.h"
 #include "guilib/GUIWindowManager.h"
@@ -93,10 +92,6 @@ bool CGUIPassword::IsItemUnlocked(T pItem,
         CMediaSourceSettings::GetInstance().UpdateSource(
             strType, strLabel, "badpwdcount", std::to_string(lockInfo.GetBadPasswordCount()));
         CMediaSourceSettings::GetInstance().Save();
-
-        // a mediasource has been unlocked successfully
-        // => refresh favourites due to possible visibility changes
-        CServiceBroker::GetFavouritesService().RefreshFavourites();
         break;
       }
     case 1:

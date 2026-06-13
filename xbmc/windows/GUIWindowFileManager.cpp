@@ -25,7 +25,6 @@
 #include "dialogs/GUIDialogProgress.h"
 #include "dialogs/GUIDialogTextViewer.h"
 #include "dialogs/GUIDialogYesNo.h"
-#include "favourites/FavouritesService.h"
 #include "filesystem/Directory.h"
 #include "filesystem/FileDirectoryFactory.h"
 #include "filesystem/VirtualDirectory.h"
@@ -1047,8 +1046,6 @@ void CGUIWindowFileManager::OnPopupMenu(int list, int item, bool bContextDriven 
     int notSelectable = CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_FILELISTS_SHOWPARENTDIRITEMS) ? 1 : 0;
     if (NumSelected(list) <  m_vecItems[list]->Size() - notSelectable)
       choices.Add(CONTROL_BTNSELECTALL, 188); // SelectAll
-    if (!pItem->IsParentFolder())
-      choices.Add(CONTROL_BTNFAVOURITES, CServiceBroker::GetFavouritesService().IsFavourited(*pItem.get(), GetID()) ? 14077 : 14076); // Add/Remove Favourite
     if (players.size() > 1)
       choices.Add(CONTROL_BTNPLAYWITH, 15213);
     if (CanRename(list) && !pItem->IsParentFolder())
@@ -1076,11 +1073,6 @@ void CGUIWindowFileManager::OnPopupMenu(int list, int item, bool bContextDriven 
   {
     OnSelectAll(list);
     bDeselect=false;
-  }
-  if (btnid == CONTROL_BTNFAVOURITES)
-  {
-    CServiceBroker::GetFavouritesService().AddOrRemove(*pItem.get(), GetID());
-    return;
   }
   if (btnid == CONTROL_BTNPLAYWITH)
   {

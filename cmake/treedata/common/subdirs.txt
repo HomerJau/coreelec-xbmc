@@ -13,7 +13,6 @@ xbmc/application                                application
 xbmc/commons                                    commons
 xbmc/dbwrappers                                 dbwrappers
 xbmc/dialogs                                    dialogs
-xbmc/favourites                                 favourites
 xbmc/guilib                                     guilib
 xbmc/guilib/guiinfo                             guilib_guiinfo
 xbmc/guilib/handlers                            guilib_announcement_handlers

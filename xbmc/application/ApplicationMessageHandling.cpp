@@ -27,7 +27,6 @@
 #include "cores/AudioEngine/Interfaces/AE.h"
 #include "cores/DataCacheCore.h"
 #include "dialogs/GUIDialogBusy.h"
-#include "favourites/FavouritesService.h"
 #include "filesystem/IDirectory.h"
 #include "filesystem/PluginDirectory.h"
 #include "filesystem/UPnPDirectory.h"
@@ -636,7 +635,6 @@ bool CApplicationMessageHandling::OnMessage(const CGUIMessage& message)
     case GUI_MSG_PLAYBACK_STOPPED:
     {
       CServiceBroker::GetPVRManager().OnPlaybackStopped(m_app.CurrentFileItem());
-      CServiceBroker::GetFavouritesService().OnPlaybackStopped(m_app.CurrentFileItem());
 
       CVariant data(CVariant::VariantTypeObject);
       data["end"] = false;
@@ -660,7 +658,6 @@ bool CApplicationMessageHandling::OnMessage(const CGUIMessage& message)
     case GUI_MSG_PLAYBACK_ENDED:
     {
       CServiceBroker::GetPVRManager().OnPlaybackEnded(m_app.CurrentFileItem());
-      CServiceBroker::GetFavouritesService().OnPlaybackEnded(m_app.CurrentFileItem());
 
       CVariant data(CVariant::VariantTypeObject);
       data["end"] = true;

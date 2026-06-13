@@ -13,7 +13,6 @@ set(SOURCES AddonsDirectory.cpp
             DllLibCurl.cpp
 	    DiscDirectoryHelper.cpp
             EventsDirectory.cpp
-            FavouritesDirectory.cpp
             FileCache.cpp
             File.cpp
             FileDirectoryFactory.cpp
@@ -78,7 +77,6 @@ set(HEADERS AddonsDirectory.h
             EventsDirectory.h
             FTPDirectory.h
             FTPParse.h
-            FavouritesDirectory.h
             File.h
             FileCache.h
             FileDirectoryFactory.h

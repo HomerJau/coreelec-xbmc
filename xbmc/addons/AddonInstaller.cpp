@@ -25,7 +25,6 @@
 #include "events/AddonManagementEvent.h"
 #include "events/EventLog.h"
 #include "events/NotificationEvent.h"
-#include "favourites/FavouritesService.h"
 #include "filesystem/Directory.h"
 #include "filesystem/File.h"
 #include "guilib/GUIComponent.h"
@@ -139,8 +138,6 @@ public:
   void SetRecurseOrphaned(RecurseOrphaned recurseOrphaned) { m_recurseOrphaned = recurseOrphaned; };
 
 private:
-  void ClearFavourites();
-
   ADDON::AddonPtr m_addon;
   bool m_removeData;
   RecurseOrphaned m_recurseOrphaned = RecurseOrphaned::CHOICE_YES;
@@ -1277,7 +1274,6 @@ bool CAddonUnInstallJob::DoWork()
     return false;
   }
 
-  ClearFavourites();
   if (m_removeData)
   {
     CFileUtils::DeleteItem(m_addon->Profile());
@@ -1317,23 +1313,5 @@ bool CAddonUnInstallJob::DoWork()
   }
 
   return true;
-}
-
-void CAddonUnInstallJob::ClearFavourites()
-{
-  bool bSave = false;
-  CFileItemList items;
-  CServiceBroker::GetFavouritesService().GetAll(items);
-  for (int i = 0; i < items.Size(); i++)
-  {
-    if (items[i]->GetPath().find(m_addon->ID()) != std::string::npos)
-    {
-      items.Remove(items[i].get());
-      bSave = true;
-    }
-  }
-
-  if (bSave)
-    CServiceBroker::GetFavouritesService().Save(items);
 }
 } // unnamed namespace

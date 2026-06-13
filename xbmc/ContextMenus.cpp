@@ -9,7 +9,6 @@
 #include "ContextMenus.h"
 
 #include "ServiceBroker.h"
-#include "favourites/FavouritesService.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
 #include "input/WindowTranslator.h"
@@ -54,59 +53,5 @@ namespace CONTEXTMENU
   {
     return CServiceBroker::GetMediaManager().Eject(item->GetPath());
   }
-
-namespace
-{
-
-int GetTargetWindowID(const CFileItem& item)
-{
-  int iTargetWindow = WINDOW_INVALID;
-
-  const std::string targetWindow = item.GetProperty("targetwindow").asString();
-  if (targetWindow.empty())
-    iTargetWindow = CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow();
-  else
-    iTargetWindow = CWindowTranslator::TranslateWindow(targetWindow);
-
-  return iTargetWindow;
-}
-
-} // unnamed namespace
-
-std::string CAddRemoveFavourite::GetLabel(const CFileItem& item) const
-{
-  return CServiceBroker::GetResourcesComponent().GetLocalizeStrings().Get(
-      CServiceBroker::GetFavouritesService().IsFavourited(item, GetTargetWindowID(item))
-          ? 14077 /* Remove from favourites */
-          : 14076); /* Add to favourites */
-}
-
-bool CAddRemoveFavourite::IsVisible(const CFileItem& item) const
-{
-  if (item.GetProperty("hide_add_remove_favourite").asBoolean())
-    return false;
-
-  return (!item.GetPath().empty() && !item.IsParentFolder() && !item.IsPath("add") &&
-          !item.IsPath("newplaylist://") && !URIUtils::IsProtocol(item.GetPath(), "favourites") &&
-          !URIUtils::IsProtocol(item.GetPath(), "newsmartplaylist") &&
-          !URIUtils::IsProtocol(item.GetPath(), "newtag") &&
-          !URIUtils::IsProtocol(item.GetPath(), "musicsearch") &&
-          // Hide this item for all PVR EPG/timers/search except EPG/timer/timer rules/search root
-          // folders.
-          !StringUtils::StartsWith(item.GetPath(), "pvr://guide/") &&
-          !StringUtils::StartsWith(item.GetPath(), "pvr://timers/") &&
-          !StringUtils::StartsWith(item.GetPath(), "pvr://search/")) ||
-         item.GetPath() == "pvr://guide/tv/" || item.GetPath() == "pvr://guide/radio/" ||
-         item.GetPath() == "pvr://timers/tv/timers/" ||
-         item.GetPath() == "pvr://timers/radio/timers/" ||
-         item.GetPath() == "pvr://timers/tv/rules/" ||
-         item.GetPath() == "pvr://timers/radio/rules/" || item.GetPath() == "pvr://search/tv/" ||
-         item.GetPath() == "pvr://search/radio/";
-}
-
-bool CAddRemoveFavourite::Execute(const std::shared_ptr<CFileItem>& item) const
-{
-  return CServiceBroker::GetFavouritesService().AddOrRemove(*item.get(), GetTargetWindowID(*item));
-}
 
 } // namespace CONTEXTMENU

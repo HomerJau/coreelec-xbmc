@@ -20,7 +20,6 @@
 #include "addons/IAddon.h"
 #include "addons/addoninfo/AddonType.h"
 #include "dialogs/GUIDialogContextMenu.h"
-#include "favourites/ContextMenus.h"
 #include "messaging/ApplicationMessenger.h"
 #include "music/ContextMenus.h"
 #include "pvr/PVRContextMenus.h"
@@ -100,17 +99,6 @@ void CContextMenuManager::Init()
       std::make_shared<CONTEXTMENU::CTVShowScanForNewContent>(),
       std::make_shared<CONTEXTMENU::CEjectDisk>(),
       std::make_shared<CONTEXTMENU::CEjectDrive>(),
-      std::make_shared<CONTEXTMENU::CFavouritesTargetBrowse>(),
-      std::make_shared<CONTEXTMENU::CFavouritesTargetResume>(),
-      std::make_shared<CONTEXTMENU::CFavouritesTargetPlay>(),
-      std::make_shared<CONTEXTMENU::CFavouritesTargetInfo>(),
-      std::make_shared<CONTEXTMENU::CMoveUpFavourite>(),
-      std::make_shared<CONTEXTMENU::CMoveDownFavourite>(),
-      std::make_shared<CONTEXTMENU::CChooseThumbnailForFavourite>(),
-      std::make_shared<CONTEXTMENU::CRenameFavourite>(),
-      std::make_shared<CONTEXTMENU::CRemoveFavourite>(),
-      std::make_shared<CONTEXTMENU::CAddRemoveFavourite>(),
-      std::make_shared<CONTEXTMENU::CFavouritesTargetContextMenu>(),
   };
 
   ReloadAddonItems();

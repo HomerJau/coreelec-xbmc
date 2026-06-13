@@ -29,12 +29,4 @@ struct CEjectDrive : CStaticContextMenuAction
   bool Execute(const std::shared_ptr<CFileItem>& item) const override;
 };
 
-struct CAddRemoveFavourite : IContextMenuItem
-{
-  CAddRemoveFavourite() = default;
-  std::string GetLabel(const CFileItem& item) const override;
-  bool IsVisible(const CFileItem& item) const override;
-  bool Execute(const std::shared_ptr<CFileItem>& item) const override;
-};
-
 }

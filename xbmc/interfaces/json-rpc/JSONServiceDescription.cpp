@@ -11,7 +11,6 @@
 #include "AddonsOperations.h"
 #include "ApplicationOperations.h"
 #include "AudioLibrary.h"
-#include "FavouritesOperations.h"
 #include "FileOperations.h"
 #include "GUIOperations.h"
 #include "InputOperations.h"
@@ -236,10 +235,6 @@ JsonRpcMethodMap CJSONServiceDescription::m_methodMaps[] = {
   { "Application.SetVolume",                        CApplicationOperations::SetVolume },
   { "Application.SetMute",                          CApplicationOperations::SetMute },
   { "Application.Quit",                             CApplicationOperations::Quit },
-
-// Favourites operations
-  { "Favourites.GetFavourites",                     CFavouritesOperations::GetFavourites },
-  { "Favourites.AddFavourite",                      CFavouritesOperations::AddFavourite },
 
 // Textures operations
   { "Textures.GetTextures",                         CTextureOperations::GetTextures },

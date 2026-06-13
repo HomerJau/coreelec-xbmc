@@ -43,7 +43,6 @@ class IWSDiscovery;
 }
 #endif
 class CDataCacheCore;
-class CFavouritesService;
 class CNetworkBase;
 class CWinSystemBase;
 class CPowerManager;
@@ -201,7 +200,6 @@ public:
   CSlideShowDelegator& GetSlideShowDelegator();
   int init_level = 0;
 
-  CFavouritesService& GetFavouritesService();
   CInputManager& GetInputManager();
   CFileExtensionProvider& GetFileExtensionProvider();
 
@@ -243,7 +241,6 @@ protected:
   std::unique_ptr<KODI::GAME::CGameServices> m_gameServices;
   std::unique_ptr<KODI::RETRO::CGUIGameRenderManager> m_gameRenderManager;
   std::unique_ptr<PERIPHERALS::CPeripherals> m_peripherals;
-  std::unique_ptr<CFavouritesService> m_favouritesService;
   std::unique_ptr<CInputManager> m_inputManager;
   std::unique_ptr<CFileExtensionProvider> m_fileExtensionProvider;
   std::unique_ptr<CNetworkBase> m_network;

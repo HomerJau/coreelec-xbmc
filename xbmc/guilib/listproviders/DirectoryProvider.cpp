@@ -14,7 +14,6 @@
 #include "addons/AddonEvents.h"
 #include "addons/AddonManager.h"
 #include "addons/RepositoryUpdater.h"
-#include "favourites/FavouritesService.h"
 #include "filesystem/Directory.h"
 #include "interfaces/AnnouncementManager.h"
 #include "interfaces/IAnnouncer.h"
@@ -188,22 +187,6 @@ private:
   std::atomic_flag m_pvrStarted{};
 };
 
-class CFavouritesSubscriber : public CDirectoryProvider::CSubscriber
-{
-public:
-  explicit CFavouritesSubscriber(ISubscriberCallback& invalidate)
-    : CDirectoryProvider::CSubscriber(invalidate)
-  {
-    CServiceBroker::GetFavouritesService().Events().Subscribe(
-        this,
-        [this](const CFavouritesService::FavouritesUpdated& /*event*/) { OnEventPublished(); });
-  }
-  ~CFavouritesSubscriber() override
-  {
-    CServiceBroker::GetFavouritesService().Events().Unsubscribe(this);
-  }
-};
-
 std::unique_ptr<CDirectoryProvider::CSubscriber> GetSubscriber(const std::string& url,
                                                                ISubscriberCallback& invalidate)
 {
@@ -211,8 +194,6 @@ std::unique_ptr<CDirectoryProvider::CSubscriber> GetSubscriber(const std::string
     return std::make_unique<CAddonsSubscriber>(invalidate);
   else if (URIUtils::IsProtocol(url, "pvr"))
     return std::make_unique<CPVRSubscriber>(invalidate);
-  else if (URIUtils::IsProtocol(url, "favourites"))
-    return std::make_unique<CFavouritesSubscriber>(invalidate);
   else
     return std::make_unique<CDirectoryProvider::CSubscriber>(invalidate);
 }
@@ -638,13 +619,6 @@ bool CDirectoryProvider::OnClick(const std::shared_ptr<CGUIListItem>& item)
 {
   std::shared_ptr<CFileItem> targetItem{std::static_pointer_cast<CFileItem>(item)};
 
-  if (targetItem->IsFavourite())
-  {
-    targetItem = CServiceBroker::GetFavouritesService().ResolveFavourite(*targetItem);
-    if (!targetItem)
-      return false;
-  }
-
   const CExecString exec{*targetItem, GetTarget(*targetItem)};
   const bool isPlayMedia{exec.GetFunction() == "playmedia"};
 
@@ -672,13 +646,6 @@ bool CDirectoryProvider::OnClick(const std::shared_ptr<CGUIListItem>& item)
 bool CDirectoryProvider::OnPlay(const std::shared_ptr<CGUIListItem>& item)
 {
   std::shared_ptr<CFileItem> targetItem{std::static_pointer_cast<CFileItem>(item)};
-
-  if (targetItem->IsFavourite())
-  {
-    targetItem = CServiceBroker::GetFavouritesService().ResolveFavourite(*targetItem);
-    if (!targetItem)
-      return false;
-  }
 
   // video play action setting is for files and folders...
   if (targetItem->HasVideoInfoTag() ||
@@ -709,11 +676,8 @@ bool CDirectoryProvider::OnPlay(const std::shared_ptr<CGUIListItem>& item)
 bool CDirectoryProvider::OnInfo(const std::shared_ptr<CGUIListItem>& item)
 {
   const auto fileItem{std::static_pointer_cast<CFileItem>(item)};
-  const auto targetItem{fileItem->IsFavourite()
-                            ? CServiceBroker::GetFavouritesService().ResolveFavourite(*fileItem)
-                            : fileItem};
 
-  return CGUIContentUtils::ShowInfoForItem(*targetItem);
+  return CGUIContentUtils::ShowInfoForItem(*fileItem);
 }
 
 bool CDirectoryProvider::OnContextMenu(const std::shared_ptr<CGUIListItem>& item)

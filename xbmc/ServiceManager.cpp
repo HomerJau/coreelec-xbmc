@@ -21,7 +21,6 @@
 #include "cores/DataCacheCore.h"
 #include "cores/RetroPlayer/guibridge/GUIGameRenderManager.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
-#include "favourites/FavouritesService.h"
 #include "games/GameServices.h"
 #include "games/controllers/ControllerManager.h"
 #include "input/InputManager.h"
@@ -124,7 +123,7 @@ bool CServiceManager::InitStageOne()
   return true;
 }
 
-bool CServiceManager::InitStageTwo(const std::string& profilesUserDataFolder)
+bool CServiceManager::InitStageTwo([[maybe_unused]] const std::string& profilesUserDataFolder)
 {
   // Initialize the addon database (must be before the addon manager is init'd)
   try
@@ -160,8 +159,6 @@ bool CServiceManager::InitStageTwo(const std::string& profilesUserDataFolder)
 
   m_binaryAddonCache = std::make_unique<ADDON::CBinaryAddonCache>();
   m_binaryAddonCache->Init();
-
-  m_favouritesService = std::make_unique<CFavouritesService>(profilesUserDataFolder);
 
   m_serviceAddons = std::make_unique<ADDON::CServiceAddonManager>(*m_addonMgr);
 
@@ -277,7 +274,6 @@ void CServiceManager::DeinitStageTwo()
   m_gameControllerManager.reset();
   m_contextMenuManager.reset();
   m_serviceAddons.reset();
-  m_favouritesService.reset();
   m_binaryAddonCache.reset();
   m_dataCacheCore.reset();
   m_PVRManager.reset();
@@ -412,11 +408,6 @@ KODI::RETRO::CGUIGameRenderManager& CServiceManager::GetGameRenderManager()
 PERIPHERALS::CPeripherals& CServiceManager::GetPeripherals()
 {
   return *m_peripherals;
-}
-
-CFavouritesService& CServiceManager::GetFavouritesService()
-{
-  return *m_favouritesService;
 }
 
 CInputManager& CServiceManager::GetInputManager()

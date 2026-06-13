@@ -58,7 +58,6 @@ class XBPython;
 class CDataCacheCore;
 class IAE;
 class IApplicationComponent;
-class CFavouritesService;
 class CInputManager;
 class CFileExtensionProvider;
 class CNetworkBase;
@@ -169,7 +168,6 @@ public:
   static KODI::GAME::CGameServices& GetGameServices();
   static KODI::RETRO::CGUIGameRenderManager& GetGameRenderManager();
   static PERIPHERALS::CPeripherals& GetPeripherals();
-  static CFavouritesService& GetFavouritesService();
   static ADDON::CServiceAddonManager& GetServiceAddons();
   static ADDON::CRepositoryUpdater& GetRepositoryUpdater();
   static CInputManager& GetInputManager();

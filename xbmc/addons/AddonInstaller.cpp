@@ -9,6 +9,7 @@
 #include "AddonInstaller.h"
 
 #include "FileItem.h"
+#include "FileItemList.h"
 #include "FilesystemInstaller.h"
 #include "GUIPassword.h"
 #include "GUIUserMessages.h" // for callback

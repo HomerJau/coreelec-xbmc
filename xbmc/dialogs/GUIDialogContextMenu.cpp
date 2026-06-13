@@ -9,6 +9,7 @@
 #include "GUIDialogContextMenu.h"
 
 #include "FileItem.h"
+#include "FileItemList.h"
 #include "GUIDialogFileBrowser.h"
 #include "GUIDialogMediaSource.h"
 #include "GUIDialogYesNo.h"

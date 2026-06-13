@@ -8,6 +8,7 @@
 
 #include "ContextMenus.h"
 
+#include "FileItem.h"
 #include "ServiceBroker.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"

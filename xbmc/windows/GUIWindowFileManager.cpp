@@ -9,6 +9,7 @@
 #include "GUIWindowFileManager.h"
 
 #include "Autorun.h"
+#include "FileItemList.h"
 #include "GUIPassword.h"
 #include "GUIUserMessages.h"
 #include "PlayListPlayer.h"
